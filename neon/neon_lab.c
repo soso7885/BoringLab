@@ -1,7 +1,8 @@
 /* EE277A SIMD Lab Assignment
  *
  * arm neon programing, test on ti am335x
- * 
+ *
+ * compile: arm-linux-gnueabihf-gcc -Wall -std=gnu99 -O0 -mcpu=cortex-a8 -mfloat-abi=hard -mfpu=neon 
  */
 
 #include <stdio.h>
