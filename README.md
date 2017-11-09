@@ -1,2 +1,2 @@
-Hello world, Mr's Boring
+Hello world, Mr. Boring
 ========================
