@@ -44,14 +44,35 @@ int sad(const unsigned char *im1_p, const unsigned char *im2_p, int numcols)
 	
 	/* compare one pair of 16x16 blocks */
 	unsigned int total = 0;
-	int count = 0;
-	for (int row = 0; row < 16; row++, count+=16) {
+	for (int row = 0; row < 16; row++) {
 		uint8x16_t ay_img1, ay_img2, ay_sum;
+		uint8_t sum[16];
 		
 		ay_img1 = vld1q_u8(im1_p);
 		ay_img2 = vld1q_u8(im2_p);
 		ay_sum = vabdq_u8(ay_img1, ay_img2);
-	
+
+		// store back	
+		vst1q_u8(sum, ay_sum);
+
+		// loop unrolling
+		total += sum[0];
+		total += sum[1];		
+		total += sum[2];		
+		total += sum[3];		
+		total += sum[4];		
+		total += sum[5];		
+		total += sum[6];		
+		total += sum[7];		
+		total += sum[8];		
+		total += sum[9];		
+		total += sum[10];		
+		total += sum[11];		
+		total += sum[12];		
+		total += sum[13];		
+		total += sum[14];		
+		total += sum[15];		
+/*
 		total += vgetq_lane_u8(ay_sum, 0);
 		total += vgetq_lane_u8(ay_sum, 1);
 		total += vgetq_lane_u8(ay_sum, 2);
@@ -68,18 +89,14 @@ int sad(const unsigned char *im1_p, const unsigned char *im2_p, int numcols)
 		total += vgetq_lane_u8(ay_sum, 13);
 		total += vgetq_lane_u8(ay_sum, 14);
 		total += vgetq_lane_u8(ay_sum, 15);
-
-		im1_p += 16;
-		im2_p += 16;
-		
-		im1_p = im1_p +  (COLS - 16);
-		im2_p = im2_p +  (COLS - 16);
+*/		
+		im1_p += COLS;
+		im2_p += COLS;
 	}
 
 	gettimeofday(&end, NULL);
 	timersub(&end, &begin, &diff);
 
-	printf("the count is %d\n",count);
 	printf("Excute time: %ld usec\n", (diff.tv_sec*1000000+diff.tv_usec));
 
 	return total;

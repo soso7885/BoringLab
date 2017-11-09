@@ -22,6 +22,8 @@
 #define ROWS 144
 #define COLS 176
 
+#define TEST 16
+
 static unsigned char image1[ROWS][COLS] __attribute__ ((aligned (16)));
 static unsigned char image2[ROWS][COLS] __attribute__ ((aligned (16)));
 
@@ -44,21 +46,19 @@ int sad(const unsigned char *im1_p, const unsigned char *im2_p, int numcols)
 	
 	/* compare one pair of 16x16 blocks */
 	unsigned int total = 0;
-	int count = 0;
-	for (int row = 0; row < 16; row++) {
-		for (int col = 0; col < 16; col++, count++) {
+	for (int row = 0; row < TEST; row++) {
+		for (int col = 0; col < TEST; col++) {
 			total += abs(*im1_p - *im2_p);
 			im1_p = im1_p + 1 ; //= im1_p + 1; // increment image1 column ptr
 			im2_p = im2_p + 1 ; //= im2_p + 1; // increment image2 column ptr
 		}
-		im1_p = im1_p +  (COLS - 16);
-		im2_p = im2_p +  (COLS - 16);
+		im1_p = im1_p +  (COLS - TEST);
+		im2_p = im2_p +  (COLS - TEST);
 	}
 
 	gettimeofday(&end, NULL);
 	timersub(&end, &begin, &diff);
 
-	printf("the count is %d\n",count);
 	printf("Excute time: %ld usec\n", (diff.tv_sec*1000000+diff.tv_usec));
 
 	return total;
