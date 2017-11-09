@@ -1,18 +1,8 @@
 /* EE277A SIMD Lab Assignment
  *
- *
- * PS7 UART (Zynq) is not initialized by this application, since
- * bootrom/bsp configures it to baud rate 115200
- *
- * ------------------------------------------------
- * | UART TYPE   BAUD RATE                        |
- * ------------------------------------------------
- *   ps7_uart    115200 (configured by bootrom/bsp)
+ * arm neon programing, test on ti am335x
+ * 
  */
-
-/*
-	Original Version
-*/
 
 #include <stdio.h>
 #include <stdlib.h>
