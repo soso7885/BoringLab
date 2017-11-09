@@ -1,17 +1,9 @@
-/* EE277A SIMD Lab Assignment
- *
- *
- * PS7 UART (Zynq) is not initialized by this application, since
- * bootrom/bsp configures it to baud rate 115200
- *
- * ------------------------------------------------
- * | UART TYPE   BAUD RATE                        |
- * ------------------------------------------------
- *   ps7_uart    115200 (configured by bootrom/bsp)
- */
+/*
+ *  EE277A SIMD Lab Assignment
+*/
 
 /*
-	Original Version
+ * Original Version
 */
 
 #include <stdio.h>
@@ -21,8 +13,6 @@
 
 #define ROWS 144
 #define COLS 176
-
-#define TEST 16
 
 static unsigned char image1[ROWS][COLS] __attribute__ ((aligned (16)));
 static unsigned char image2[ROWS][COLS] __attribute__ ((aligned (16)));
@@ -46,14 +36,14 @@ int sad(const unsigned char *im1_p, const unsigned char *im2_p, int numcols)
 	
 	/* compare one pair of 16x16 blocks */
 	unsigned int total = 0;
-	for (int row = 0; row < TEST; row++) {
-		for (int col = 0; col < TEST; col++) {
+	for (int row = 0; row < 16; row++) {
+		for (int col = 0; col < 16; col++) {
 			total += abs(*im1_p - *im2_p);
 			im1_p = im1_p + 1 ; //= im1_p + 1; // increment image1 column ptr
 			im2_p = im2_p + 1 ; //= im2_p + 1; // increment image2 column ptr
 		}
-		im1_p = im1_p +  (COLS - TEST);
-		im2_p = im2_p +  (COLS - TEST);
+		im1_p = im1_p +  (COLS - 16);
+		im2_p = im2_p +  (COLS - 16);
 	}
 
 	gettimeofday(&end, NULL);
