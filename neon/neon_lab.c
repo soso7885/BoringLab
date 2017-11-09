@@ -45,15 +45,14 @@ int sad(const unsigned char *im1_p, const unsigned char *im2_p, int numcols)
 	/* compare one pair of 16x16 blocks */
 	unsigned int total = 0;
 	for (int row = 0; row < 16; row++) {
-		uint8x16_t ay_img1, ay_img2, ay_sum;
+		uint8x16_t vt_img1, vt_img2, vt_sum;
 		uint8_t sum[16];
 		
-		ay_img1 = vld1q_u8(im1_p);
-		ay_img2 = vld1q_u8(im2_p);
-		ay_sum = vabdq_u8(ay_img1, ay_img2);
-
-		// store back	
-		vst1q_u8(sum, ay_sum);
+		vt_img1 = vld1q_u8(im1_p);	// load img1
+		vt_img2 = vld1q_u8(im2_p);	// load img2
+		vt_sum = vabdq_u8(vt_img1, vt_img2);	// abs
+		
+		vst1q_u8(sum, vt_sum);	// store back
 
 		// loop unrolling
 		total += sum[0];
