@@ -33,57 +33,32 @@ int sad(const unsigned char *im1_p, const unsigned char *im2_p, int numcols)
 
 	gettimeofday(&begin, NULL);
 	
-	/* compare one pair of 16x16 blocks */
+	/* ------------------- compare one pair of 16x16 blocks ----------------------- */
 	unsigned int total = 0;
+	uint16x8_t vec_tot = vmovq_n_u16(0);	// use uint8x16 will overflow
+	uint32x4_t sum0;
+	uint64x2_t sum1;
+	
 	for (int row = 0; row < 16; row++) {
-		uint8x16_t vt_img1, vt_img2, vt_sum;
-		uint8_t sum[16];
+		uint8x16_t vec_img1, vec_img2, vec_abs;
 		
-		vt_img1 = vld1q_u8(im1_p);	// load img1
-		vt_img2 = vld1q_u8(im2_p);	// load img2
-		vt_sum = vabdq_u8(vt_img1, vt_img2);	// abs
-		
-		vst1q_u8(sum, vt_sum);	// store back
+		vec_img1 = vld1q_u8(im1_p);	// load img1
+		vec_img2 = vld1q_u8(im2_p);	// load img2
+		vec_abs = vabdq_u8(vec_img1, vec_img2);	// abs
 
-		// loop unrolling
-		total += sum[0];
-		total += sum[1];		
-		total += sum[2];		
-		total += sum[3];		
-		total += sum[4];		
-		total += sum[5];		
-		total += sum[6];		
-		total += sum[7];		
-		total += sum[8];		
-		total += sum[9];		
-		total += sum[10];		
-		total += sum[11];		
-		total += sum[12];		
-		total += sum[13];		
-		total += sum[14];		
-		total += sum[15];		
-/*
-		total += vgetq_lane_u8(ay_sum, 0);
-		total += vgetq_lane_u8(ay_sum, 1);
-		total += vgetq_lane_u8(ay_sum, 2);
-		total += vgetq_lane_u8(ay_sum, 3);
-		total += vgetq_lane_u8(ay_sum, 4);
-		total += vgetq_lane_u8(ay_sum, 5);
-		total += vgetq_lane_u8(ay_sum, 6);
-		total += vgetq_lane_u8(ay_sum, 7);
-		total += vgetq_lane_u8(ay_sum, 8);
-		total += vgetq_lane_u8(ay_sum, 9);
-		total += vgetq_lane_u8(ay_sum, 10);
-		total += vgetq_lane_u8(ay_sum, 11);
-		total += vgetq_lane_u8(ay_sum, 12);
-		total += vgetq_lane_u8(ay_sum, 13);
-		total += vgetq_lane_u8(ay_sum, 14);
-		total += vgetq_lane_u8(ay_sum, 15);
-*/		
+		/* add abs to total, use pairwise addition */
+		vec_tot = vpadalq_u8(vec_tot, vec_abs);
+		
 		im1_p += COLS;
 		im2_p += COLS;
 	}
-
+	/* convert */
+	sum0 = vpaddlq_u16(vec_tot);	// 16x8->32x4
+	sum1 = vpaddlq_u32(sum0);		// 32x4->64x2
+	total += (unsigned int)vgetq_lane_u64(sum1, 0);
+	total += (unsigned int)vgetq_lane_u64(sum1, 1);
+	/* ------------------------------------------------------------------------------*/
+	
 	gettimeofday(&end, NULL);
 	timersub(&end, &begin, &diff);
 
