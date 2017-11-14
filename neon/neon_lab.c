@@ -54,7 +54,7 @@ int sad(const unsigned char *im1_p, const unsigned char *im2_p, int numcols)
 	}
 	/* convert */
 	sum0 = vpaddlq_u16(vec_tot);	// 16x8->32x4
-	sum1 = vpaddlq_u32(sum0);		// 32x4->64x2
+	sum1 = vpaddlq_u32(sum0);	// 32x4->64x2
 	total += (unsigned int)vgetq_lane_u64(sum1, 0);
 	total += (unsigned int)vgetq_lane_u64(sum1, 1);
 	/* ------------------------------------------------------------------------------*/
