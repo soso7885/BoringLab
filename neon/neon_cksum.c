@@ -23,7 +23,7 @@ int32_t cksum(uint8_t *src, int size)
 		uint8x16_t load;
 
 		load = vld1q_u8(src);
-		tmp0 = vpaddlq_u8(load);		//8x16->16x8
+		tmp0 = vpaddlq_u8(load);	//8x16->16x8
 		tot = vpadalq_u16(tot, tmp0);	//16x8->32x4
 	}
 	
